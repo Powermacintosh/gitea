@@ -1,6 +1,8 @@
 module code.gitea.io/gitea
 
-go 1.25.3
+go 1.25.0
+
+toolchain go1.25.4
 
 // rfc5280 said: "The serial number is an integer assigned by the CA to each certificate."
 // But some CAs use negative serial number, just relax the check. related:
@@ -9,7 +11,6 @@ godebug x509negativeserial=1
 
 require (
 	code.gitea.io/actions-proto-go v0.4.1
-	code.gitea.io/gitea-vet v0.2.3
 	code.gitea.io/sdk/gitea v0.22.0
 	codeberg.org/gusted/mcaptcha v0.0.0-20220723083913-4f3072e1d570
 	connectrpc.com/connect v1.18.1
@@ -116,9 +117,9 @@ require (
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	github.com/yuin/goldmark-meta v1.1.0
 	gitlab.com/gitlab-org/api/client-go v0.142.4
-	golang.org/x/crypto v0.42.0
+	golang.org/x/crypto v0.43.0
 	golang.org/x/image v0.30.0
-	golang.org/x/net v0.44.0
+	golang.org/x/net v0.45.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.17.0
 	golang.org/x/sys v0.37.0
@@ -135,6 +136,7 @@ require (
 
 require (
 	cloud.google.com/go/compute/metadata v0.8.0 // indirect
+	code.gitea.io/gitea-vet v0.2.3 // indirect
 	dario.cat/mergo v1.0.2 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	git.sr.ht/~mariusor/go-xsd-duration v0.0.0-20220703122237-02e73435a078 // indirect
@@ -307,3 +309,5 @@ exclude github.com/gofrs/uuid v4.0.0+incompatible
 exclude github.com/goccy/go-json v0.4.11
 
 exclude github.com/satori/go.uuid v1.2.0
+
+tool code.gitea.io/gitea-vet
