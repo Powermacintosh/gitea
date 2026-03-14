@@ -31,8 +31,8 @@ const DefaultAvatarSize = 256
 // RandomImageWithSize generates and returns a random avatar image unique to input data
 // in custom size (height and width).
 func RandomImageWithSize(size int, data []byte) image.Image {
-	// we use white as background, and use dark colors to draw blocks
-	imgMaker := identicon.New(size, color.White, identicon.DarkColors)
+	// ИЗМЕНЕНО: используем color.Transparent вместо color.White для прозрачного фона
+	imgMaker := identicon.New(size, color.Transparent, identicon.DarkColors)
 	return imgMaker.Make(data)
 }
 
@@ -65,8 +65,6 @@ func processAvatarImage(data []byte, maxOriginSize int64) ([]byte, error) {
 
 	// If the origin is small enough, just use it, then APNG could be supported,
 	// otherwise, if the image is processed later, APNG loses animation.
-	// And one more thing, webp is not fully supported, for animated webp, image.DecodeConfig works but Decode fails.
-	// So for animated webp, if the uploaded file is smaller than maxOriginSize, it will be used, if it's larger, there will be an error.
 	if len(data) < int(maxOriginSize) {
 		return data, nil
 	}
@@ -89,7 +87,7 @@ func processAvatarImage(data []byte, maxOriginSize int64) ([]byte, error) {
 	}
 	resized := bs.Bytes()
 
-	// usually the png compression is not good enough, use the original image (no cropping/resizing) if the origin is smaller
+	// usually the png compression is not good enough, use the original image if the origin is smaller
 	if len(data) <= len(resized) {
 		return data, nil
 	}
@@ -98,7 +96,6 @@ func processAvatarImage(data []byte, maxOriginSize int64) ([]byte, error) {
 }
 
 // ProcessAvatarImage process the avatar image data, crop and resize it if necessary.
-// the returned data could be the original image if no processing is needed.
 func ProcessAvatarImage(data []byte) ([]byte, error) {
 	return processAvatarImage(data, setting.Avatar.MaxOriginSize)
 }
@@ -106,13 +103,15 @@ func ProcessAvatarImage(data []byte) ([]byte, error) {
 // scale resizes the image to width x height using the given scaler.
 func scale(src image.Image, width, height int, scale draw.Scaler) image.Image {
 	rect := image.Rect(0, 0, width, height)
+	// Используем NewRGBA для корректной поддержки прозрачности
 	dst := image.NewRGBA(rect)
+	// Предварительно заполняем прозрачным цветом
+	draw.Draw(dst, rect, image.Transparent, image.Point{}, draw.Src)
 	scale.Scale(dst, rect, src, src.Bounds(), draw.Over, nil)
 	return dst
 }
 
 // cropSquare crops the largest square image from the center of the image.
-// If the image is already square, it is returned unchanged.
 func cropSquare(src image.Image) image.Image {
 	bounds := src.Bounds()
 	if bounds.Dx() == bounds.Dy() {
@@ -121,16 +120,15 @@ func cropSquare(src image.Image) image.Image {
 
 	var rect image.Rectangle
 	if bounds.Dx() > bounds.Dy() {
-		// width > height
 		size := bounds.Dy()
 		rect = image.Rect((bounds.Dx()-size)/2, 0, (bounds.Dx()+size)/2, size)
 	} else {
-		// width < height
 		size := bounds.Dx()
 		rect = image.Rect(0, (bounds.Dy()-size)/2, size, (bounds.Dy()+size)/2)
 	}
 
 	dst := image.NewRGBA(rect)
+	// Используем draw.Src для сохранения прозрачности при обрезке
 	draw.Draw(dst, rect, src, rect.Min, draw.Src)
 	return dst
 }
