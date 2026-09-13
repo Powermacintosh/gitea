@@ -36,7 +36,7 @@
 		{{template "custom/extra_links" .}}
 
 		{{if not .IsSigned}}
-			<a class="item" target="_blank" href="https://docs.gitea.com">{{ctx.Locale.Tr "help"}}</a>
+			<a class="item" target="_blank" href="{{AppSubUrl}}/docs">{{ctx.Locale.Tr "help"}}</a>
 		{{end}}
 	</div>
 
@@ -119,11 +119,11 @@
 						{{svg "octicon-tools"}}
 						{{ctx.Locale.Tr "your_settings"}}
 					</a>
-					<a class="item" target="_blank" href="https://docs.gitea.com">
+					<a class="item" target="_blank" href="{{AppSubUrl}}/docs">
 						{{svg "octicon-question"}}
 						{{ctx.Locale.Tr "help"}}
 					</a>
-					{{if .IsAdmin}}
+{{if .IsAdmin}}
 					<div class="divider"></div>
 					<a class="{{if .PageIsAdmin}}active {{end}}item" href="{{AppSubUrl}}/-/admin">
 						{{svg "octicon-server"}}
@@ -153,30 +153,30 @@
 
 	{{$activeStopwatch := and .PageGlobalData (call .PageGlobalData.GetActiveStopwatch)}}
 	{{/* always rendered so the Tippy popup has content to clone if the icon appears via a real-time push */}}
-	<div class="active-stopwatch-popup tippy-target">
-		<div class="flex-text-block tw-p-3">
+		<div class="active-stopwatch-popup tippy-target">
+			<div class="flex-text-block tw-p-3">
 			<a class="stopwatch-link flex-text-block muted" {{if $activeStopwatch}}href="{{$activeStopwatch.IssueLink}}"{{end}}>
-				{{svg "octicon-issue-opened" 16}}
+					{{svg "octicon-issue-opened" 16}}
 				<span class="stopwatch-issue">{{if $activeStopwatch}}{{$activeStopwatch.RepoSlug}}#{{$activeStopwatch.IssueIndex}}{{end}}</span>
-			</a>
-			<div class="tw-flex tw-gap-1">
+				</a>
+				<div class="tw-flex tw-gap-1">
 				<form class="stopwatch-commit form-fetch-action" method="post" {{if $activeStopwatch}}action="{{$activeStopwatch.IssueLink}}/times/stopwatch/stop"{{end}}>
-					<button
-						type="submit"
-						class="ui button mini compact basic icon tw-mr-0"
-						data-tooltip-content="{{ctx.Locale.Tr "repo.issues.stop_tracking"}}"
-					>{{svg "octicon-square-fill"}}</button>
-				</form>
+						<button
+							type="submit"
+							class="ui button mini compact basic icon tw-mr-0"
+							data-tooltip-content="{{ctx.Locale.Tr "repo.issues.stop_tracking"}}"
+						>{{svg "octicon-square-fill"}}</button>
+					</form>
 				<form class="stopwatch-cancel form-fetch-action" method="post" {{if $activeStopwatch}}action="{{$activeStopwatch.IssueLink}}/times/stopwatch/cancel"{{end}}>
-					<button
-						type="submit"
-						class="ui button mini compact basic icon tw-mr-0"
-						data-tooltip-content="{{ctx.Locale.Tr "repo.issues.cancel_tracking"}}"
-					>{{svg "octicon-trash"}}</button>
-				</form>
+						<button
+							type="submit"
+							class="ui button mini compact basic icon tw-mr-0"
+							data-tooltip-content="{{ctx.Locale.Tr "repo.issues.cancel_tracking"}}"
+						>{{svg "octicon-trash"}}</button>
+					</form>
+				</div>
 			</div>
 		</div>
-	</div>
 </nav>
 {{template "base/head_impersonate_banner"}}
 {{template "base/head_banner"}}

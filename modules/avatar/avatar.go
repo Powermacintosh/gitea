@@ -30,8 +30,8 @@ const DefaultAvatarSize = 256
 // RandomImageWithSize generates and returns a random avatar image unique to input data
 // in custom size (height and width).
 func RandomImageWithSize(size int, data []byte) image.Image {
-	// we use white as background, and use dark colors to draw blocks
-	imgMaker := identicon.New(size, color.White, identicon.DarkColors)
+	// ИЗМЕНЕНО: используем color.Transparent вместо color.White для прозрачного фона
+	imgMaker := identicon.New(size, color.Transparent, identicon.DarkColors)
 	return imgMaker.Make(data)
 }
 
@@ -105,7 +105,10 @@ func ProcessAvatarImage(data []byte) ([]byte, error) {
 // scale resizes the image to width x height using the given scaler.
 func scale(src image.Image, width, height int, scale draw.Scaler) image.Image {
 	rect := image.Rect(0, 0, width, height)
+	// Используем NewRGBA для корректной поддержки прозрачности
 	dst := image.NewRGBA(rect)
+	// Предварительно заполняем прозрачным цветом
+	draw.Draw(dst, rect, image.Transparent, image.Point{}, draw.Src)
 	scale.Scale(dst, rect, src, src.Bounds(), draw.Over, nil)
 	return dst
 }
@@ -130,6 +133,7 @@ func cropSquare(src image.Image) image.Image {
 	}
 
 	dst := image.NewRGBA(rect)
+	// Используем draw.Src для сохранения прозрачности при обрезке
 	draw.Draw(dst, rect, src, rect.Min, draw.Src)
 	return dst
 }

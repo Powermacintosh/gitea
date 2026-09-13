@@ -38,13 +38,16 @@ COPY docker/root /tmp/local
 
 # Set permissions for builds that made under windows which strips the executable bit from file
 RUN chmod 755 /tmp/local/usr/bin/entrypoint \
-              /tmp/local/usr/local/bin/* \
-              /tmp/local/etc/s6/gitea/* \
-              /tmp/local/etc/s6/openssh/* \
-              /tmp/local/etc/s6/.s6-svscan/* \
-              /go/src/gitea.dev/gitea
+    /tmp/local/usr/local/bin/* \
+    /tmp/local/etc/s6/gitea/* \
+    /tmp/local/etc/s6/openssh/* \
+    /tmp/local/etc/s6/.s6-svscan/* \
+    /go/src/gitea.dev/gitea
 
 FROM docker.io/library/alpine:3.24 AS gitea
+
+LABEL description="Кастомная сборка Gitea с генерацией идентиконов на прозрачном фоне, изменённой цветовой палитрой и полным переводом на русский язык. Модифицирована домашняя страница и ссылки на документацию." 
+LABEL version="1.27.2"
 
 EXPOSE 22 3000
 
@@ -64,14 +67,14 @@ RUN apk --no-cache add \
 RUN addgroup \
     -S -g 1000 \
     git && \
-  adduser \
+    adduser \
     -S -H -D \
     -h /data/git \
     -s /bin/bash \
     -u 1000 \
     -G git \
     git && \
-  echo "git:*" | chpasswd -e
+    echo "git:*" | chpasswd -e
 
 COPY --from=build-env /tmp/local /
 COPY --from=build-env /go/src/gitea.dev/gitea /app/gitea/gitea
