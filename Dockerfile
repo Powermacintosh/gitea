@@ -47,7 +47,7 @@ RUN chmod 755 /tmp/local/usr/bin/entrypoint \
 FROM docker.io/library/alpine:3.24 AS gitea
 
 LABEL description="Кастомная сборка Gitea с генерацией идентиконов на прозрачном фоне, изменённой цветовой палитрой и полным переводом на русский язык. Модифицирована домашняя страница и ссылки на документацию." 
-LABEL version="1.27.2"
+LABEL version="1.27.3"
 
 EXPOSE 22 3000
 
